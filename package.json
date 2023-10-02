@@ -1,7 +1,7 @@
 {
   "name": "digexmp1-a3-backend",
   "version": "1.0.0",
-  "description": "Coffee on web app, created for digexmp1-a3.",
+  "description": "Coffee on web app backend, created for digexmp1-a3.",
   "main": "server.js",
   "scripts": {
     "dev": "./node_modules/nodemon/bin/nodemon.js server.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ary-na/digexmp1-a3.git"
+    "url": "git+https://github.com/ary-na/digexmp1-a3-backend.git"
   },
   "keywords": [
     "Coffee on",
@@ -19,9 +19,9 @@
   "author": "Arian Najafi Yamchelo",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ary-na/digexmp1-a3/issues"
+    "url": "https://github.com/ary-na/digexmp1-a3-backend/issues"
   },
-  "homepage": "https://github.com/ary-na/digexmp1-a3#readme",
+  "homepage": "https://github.com/ary-na/digexmp1-a3-backend#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
