@@ -6,6 +6,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const port = process.env.PORT || 3000;
+const fileUpload = require("express-fileupload");
 
 // Database connection ---------------------------------------------------------
 mongoose.connect(process.env.MONGO_URI)
@@ -17,16 +18,15 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Express app setup -----------------------------------------------------------
 const app = express();
+app.use(express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use("*", cors());
+app.use(fileUpload({
+    limits: {fileSize: 50 * 1024 * 1024}
+}));
 
 // Setup routes ----------------------------------------------------------------
-
-// - Homepage route
-app.get('/', (req, res) => {
-    res.send("Homepage");
-});
 
 // - User route
 const userRouter = require("./routes/api/user");

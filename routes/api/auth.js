@@ -23,7 +23,7 @@ router.post('/signin', (req, res) => {
 
     // Find user in the database using the email filter.
     User.findOne({email: req.body.email})
-        .then(user => {
+        .then(async user => {
             // Check if user does not exist.
             if (!user) {
                 return res.status(400).json({
@@ -85,7 +85,9 @@ router.get('/validate', (req, res) => {
         // Check if the token is not valid.
         if (err) {
             console.log(err);
-            return res.sendStatus(403);
+            return res.status(401).json({
+                message: "unauthorized"
+            });
         } else {
             return res.json({
                 tokenData: tokenData

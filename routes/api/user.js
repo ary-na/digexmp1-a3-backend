@@ -4,6 +4,8 @@
 const express = require("express");
 const router = express.Router();
 const User = require("./../../models/User");
+const Utils = require("./../../Utils");
+const path = require("path");
 
 // GET -------------------------------------------------------------------------
 // @route   /user
@@ -28,9 +30,16 @@ router.get('/', (req, res) => {
 // @route   /user/:id
 // @desc    Get a user by id.
 // @access  Public
-router.get('/:id', (req, res) => {
+router.get('/:id', Utils.authenticateToken, (req, res) => {
+
+    if(req.user._id !== req.params.id){
+        return res.status(401).json({
+            message: "unauthorized"
+        });
+    }
+
     User.findById(req.params.id)
-        .then(user => {
+        .then(async user => {
             // Check if user exist in the db.
             if (!user) {
                 res.status(404).json({
@@ -62,7 +71,7 @@ router.post('/', (req, res) => {
     }
 
     // Check if user exists.
-    User.findOne({email: req.body.email}).then(user => {
+    User.findOne({email: req.body.email}).then(async user => {
         if (user) {
             return res.status(400).json({
                 message: "user already exists!"
@@ -70,14 +79,7 @@ router.post('/', (req, res) => {
         }
 
         // Create a new user document using the User model.
-        const newUser = new User({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            password: req.body.password,
-            bio: req.body.bio || "",
-            accessLevel: req.body.accessLevel
-        });
+        const newUser = new User(req.body);
 
         // Save the new user document.
         newUser.save()
@@ -105,13 +107,23 @@ router.post('/', (req, res) => {
 // @route   /user/:id
 // @desc    Update a user by id.
 // @access  Public
-router.put("/:id", (req, res) => {
+router.put("/:id", Utils.authenticateToken, (req, res) => {
     // Code source and adapted from:
     // https://stackoverflow.com/questions/42921727/how-to-check-req-body-empty-or-not-in-node-express
     // Check if header/body is missing.
     if (Object.keys(req.body).length === 0 || !req.params.id) {
         return res.status(400).json({
             message: "id or user detail is missing!"
+        });
+    }
+
+    let avatarFileName = null;
+
+    // Check if avatar file exists
+    if(req.files && req.files.avatar){
+        let uploadPath = path.join(__dirname, "..", "public", "images");
+        Utils.uploadFile(req.files.avatar, uploadPath, (uniqueFileName) => {
+           avatarFileName = uniqueFileName;
         });
     }
 
