@@ -6,13 +6,14 @@ const jwt = require("jsonwebtoken");
 const User = require("./../../models/User");
 const Utils = require("./../../Utils");
 const express = require("express");
+const {raw} = require("express");
 const router = express.Router();
 
 // POST ------------------------------------------------------------------------
-// @route   /signin
-// @desc    Sign in.
+// @route   /login
+// @desc    Login.
 // @access  Public
-router.post('/signin', (req, res) => {
+router.post('/login', async (req, res) => {
 
     // Check if an email or a password is not provided.
     if (!req.body.email || !req.body.password) {
@@ -22,7 +23,7 @@ router.post('/signin', (req, res) => {
     }
 
     // Find user in the database using the email filter.
-    User.findOne({email: req.body.email})
+    await User.findOne({email: req.body.email})
         .then(async user => {
             // Check if user does not exist.
             if (!user) {
@@ -46,7 +47,7 @@ router.post('/signin', (req, res) => {
                 // Generate a jsonwebtoken access token.
                 const accessToken = Utils.generateAccessToken(userObject);
 
-                res.json({
+                await res.json({
                     accessToken: accessToken,
                     user: userObject
                 });
@@ -67,9 +68,9 @@ router.post('/signin', (req, res) => {
 
 // GET -------------------------------------------------------------------------
 // @route   /validate
-// @desc    Validate sign in.
+// @desc    Validate Login.
 // @access  Public
-router.get('/validate', (req, res) => {
+router.get('/validate', async (req, res) => {
 
     if (!req.headers.authorization) {
         return res.status(400).json({
@@ -81,7 +82,7 @@ router.get('/validate', (req, res) => {
     const token = req.headers.authorization.split(" ")[1];
 
     // Decrypt and validate the authorization token.
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, tokenData) => {
+    await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, tokenData) => {
         // Check if the token is not valid.
         if (err) {
             console.log(err);

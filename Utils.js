@@ -2,7 +2,7 @@
 require("dotenv").config();
 const crypto = require('crypto');
 const jwt = require("jsonwebtoken");
-const { v4: uuidv4 } = require('uuid');
+const {v4: uuidv4} = require('uuid');
 const path = require('path');
 
 class Utils {
@@ -41,44 +41,61 @@ class Utils {
         return jwt.sign({user: user}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "7d"});
     }
 
-    authenticateToken(req, res, next){
-        const authHeader = req.headers['authorization']
-        const token = authHeader && authHeader.split(' ')[1]
-        if(token == null){
+    /**
+     * Authenticate user access token before allowing access to specific endpoints.
+     * @param req sent by the user.
+     * @param res sent to the user.
+     * @param next function to continue if authorized to access the endpoint.
+     * @returns {*} a response or access to the next function.
+     */
+    authenticateToken(req, res, next) {
+        const authHeader = req.headers.authorization;
+        const token = authHeader.split(" ")[1] && authHeader;
+        // Check if token is falsy.
+        if (!token) {
             return res.status(401).json({
-                message: "Unauthorised"
-            })
+                message: "unauthorised!"
+            });
         }
 
+        // Verify the access token and continue to the next function.
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-            if(err) {
+            if (err) {
                 return res.status(401).json({
-                    message: "Unauthorised"
-                })
+                    message: "unauthorised!"
+                });
             }
-            req.user = user
-            next()
-        })
+            req.user = user;
+            next();
+        });
     }
 
-    uploadFile(file, uploadPath, callback){
-        // get file extension (.jpg, .png etc)
-        const fileExt = file.name.split('.').pop()
-        // create unique file name
-        const uniqueFilename = uuidv4() + '.' + fileExt
-        // set upload path (where to store image on server)
-        const uploadPathFull = path.join(uploadPath, uniqueFilename)
-        // console.log(uploadPathFull)
-        // move image to uploadPath
-        file.mv(uploadPathFull, function(err) {
-            if(err){
-                console.log(err)
-                return false
+    /**
+     * Upload files to the database.
+     * @param file to be uploaded by the user.
+     * @param uploadPath for the file to be uploaded by the user.
+     * @param callback function to set the file to the database.
+     */
+    uploadFile(file, uploadPath, callback) {
+        // Get the file extension.
+        const fileExt = file.name.split('.').pop();
+        // Create a unique file name for the file.
+        const uniqueFilename = uuidv4 + '.' + fileExt;
+        // Set the upload path to "public > images" in the backend.
+        const uploadPathFull = path.join(uploadPath, uniqueFilename);
+
+        // Move the file to the upload path.
+        file.mv(uploadPathFull, function (err) {
+            if (err) {
+                console.log(err);
+                return false;
             }
-            if(typeof callback == 'function'){
-                callback(uniqueFilename)
+            if (typeof callback === 'function') {
+                callback(uniqueFilename);
             }
-        })
+        }).then(() => {
+            console.log("File moved to the upload path!");
+        });
     }
 }
 

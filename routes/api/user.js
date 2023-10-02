@@ -6,14 +6,15 @@ const router = express.Router();
 const User = require("./../../models/User");
 const Utils = require("./../../Utils");
 const path = require("path");
+const {raw} = require("express");
 
 // GET -------------------------------------------------------------------------
 // @route   /user
 // @desc    Get all users.
-// @access  Public
-router.get('/', (req, res) => {
+// @access  Private
+router.get('/', Utils.authenticateToken, async (req, res) => {
     // Get all users from the User model.
-    User.find()
+    await User.find()
         .then(users => {
             res.json(users);
         })
@@ -29,24 +30,24 @@ router.get('/', (req, res) => {
 // GET -------------------------------------------------------------------------
 // @route   /user/:id
 // @desc    Get a user by id.
-// @access  Public
-router.get('/:id', Utils.authenticateToken, (req, res) => {
+// @access  Private
+router.get('/:id', Utils.authenticateToken, async (req, res) => {
 
-    if(req.user._id !== req.params.id){
+    if (req.user._id !== req.params.id) {
         return res.status(401).json({
             message: "unauthorized"
         });
     }
 
-    User.findById(req.params.id)
+    await User.findById(req.params.id)
         .then(async user => {
             // Check if user exist in the db.
             if (!user) {
-                res.status(404).json({
+                await res.status(404).json({
                     message: "user not found!"
                 });
             } else {
-                res.json(user);
+                await res.json(user);
             }
         })
         .catch(err => {
@@ -62,7 +63,7 @@ router.get('/:id', Utils.authenticateToken, (req, res) => {
 // @route   /user
 // @desc    Create a new user.
 // @access  Public
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     // Check if body is missing.
     if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.password || !req.body.accessLevel) {
         return res.status(400).json({
@@ -71,7 +72,7 @@ router.post('/', (req, res) => {
     }
 
     // Check if user exists.
-    User.findOne({email: req.body.email}).then(async user => {
+    await User.findOne({email: req.body.email}).then(async user => {
         if (user) {
             return res.status(400).json({
                 message: "user already exists!"
@@ -79,10 +80,10 @@ router.post('/', (req, res) => {
         }
 
         // Create a new user document using the User model.
-        const newUser = new User(req.body);
+        const newUser = await new User(req.body);
 
         // Save the new user document.
-        newUser.save()
+        await newUser.save()
             .then(user => {
                 res.status(201).json(user);
             })
@@ -107,7 +108,7 @@ router.post('/', (req, res) => {
 // @route   /user/:id
 // @desc    Update a user by id.
 // @access  Public
-router.put("/:id", Utils.authenticateToken, (req, res) => {
+router.put("/:id", Utils.authenticateToken, async (req, res) => {
     // Code source and adapted from:
     // https://stackoverflow.com/questions/42921727/how-to-check-req-body-empty-or-not-in-node-express
     // Check if header/body is missing.
@@ -120,15 +121,15 @@ router.put("/:id", Utils.authenticateToken, (req, res) => {
     let avatarFileName = null;
 
     // Check if avatar file exists
-    if(req.files && req.files.avatar){
+    if (req.files && req.files.avatar) {
         let uploadPath = path.join(__dirname, "..", "public", "images");
-        Utils.uploadFile(req.files.avatar, uploadPath, (uniqueFileName) => {
-           avatarFileName = uniqueFileName;
+        await Utils.uploadFile(req.files.avatar, uploadPath, (uniqueFileName) => {
+            avatarFileName = uniqueFileName;
         });
     }
 
     // Find and update the user using the User model and return the updated user.
-    User.findByIdAndUpdate(req.params.id, req.body, {new: true})
+    await User.findByIdAndUpdate(req.params.id, req.body, {new: true})
         .then(user => {
             // Check if user exist in the db.
             if (!user) {
@@ -151,10 +152,10 @@ router.put("/:id", Utils.authenticateToken, (req, res) => {
 // DELETE ----------------------------------------------------------------------
 // @route   /user/:id
 // @desc    Delete a user by id.
-// @access  Public
-router.delete("/:id", (req, res) => {
+// @access  Private
+router.delete("/:id", Utils.authenticateToken, async (req, res) => {
     // Delete the user using the User model.
-    User.findByIdAndDelete(req.params.id)
+    await User.findByIdAndDelete(req.params.id)
         .then(() => {
             res.json({
                 message: "user deleted!"
