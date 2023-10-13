@@ -33,8 +33,8 @@ const userSchema = new mongoose.Schema({
     },
     accessLevel: {
         type: Number,
-        required: true
-    }
+        required: false
+    },
 }, {timestamps: true});
 
 // Create middleware ------------------------------------------------------------------

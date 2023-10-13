@@ -29,11 +29,11 @@ app.use(fileUpload({
 // Setup routes ----------------------------------------------------------------
 
 // - User route
-const userRouter = require("./routes/api/user");
+const userRouter = require("./routes/user");
 app.use('/user', userRouter);
 
 // - Auth route
-const authRouter = require("./routes/api/auth");
+const authRouter = require("./routes/auth");
 app.use('/auth', authRouter);
 
 // Run app (Listen on port) ----------------------------------------------------

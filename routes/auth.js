@@ -3,10 +3,9 @@
 // Setup dependencies for auth routes.
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const User = require("./../../models/User");
-const Utils = require("./../../Utils");
+const User = require("../models/User");
+const Utils = require("../Utils");
 const express = require("express");
-const {raw} = require("express");
 const router = express.Router();
 
 // POST ------------------------------------------------------------------------
@@ -19,7 +18,7 @@ router.post('/login', async (req, res) => {
     if (!req.body.email || !req.body.password) {
         return res.status(400).json({
             message: "email or password is missing!"
-        });
+        })
     }
 
     // Find user in the database using the email filter.
@@ -29,42 +28,39 @@ router.post('/login', async (req, res) => {
             if (!user) {
                 return res.status(400).json({
                     message: "user not found!"
-                });
+                })
             }
 
             // Check if provided password is correct.
             if (Utils.verifyPassword(req.body.password, user.password)) {
 
-                // Create user object without password and unnecessary properties.
-                const userObject = {
-                    id: user._id,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    email: user.email,
-                    bio: user.bio
-                };
+                // Create a JWT token on passwords matched.
+                let userObject = { _id: user._id }
 
                 // Generate a jsonwebtoken access token.
-                const accessToken = Utils.generateAccessToken(userObject);
+                let accessToken = Utils.generateAccessToken(userObject)
+
+                // Set password field to undefined.
+                user.password = undefined
 
                 await res.json({
                     accessToken: accessToken,
-                    user: userObject
-                });
+                    user: user
+                })
             } else {
                 return res.status(400).json({
                     message: "incorrect password or email!"
-                });
+                })
             }
         })
         .catch(err => {
             res.status(500).json({
                 message: "error signing in!",
                 error: err
-            });
-            console.log(err);
-        });
-});
+            })
+            console.log(err)
+        })
+})
 
 // GET -------------------------------------------------------------------------
 // @route   /validate
@@ -72,6 +68,7 @@ router.post('/login', async (req, res) => {
 // @access  Public
 router.get('/validate', async (req, res) => {
 
+    // Check if header is missing.
     if (!req.headers.authorization) {
         return res.status(400).json({
             message: "authorization token is missing!"
@@ -88,14 +85,26 @@ router.get('/validate', async (req, res) => {
             console.log(err);
             return res.status(401).json({
                 message: "unauthorized"
-            });
-        } else {
-            return res.json({
-                tokenData: tokenData
-            });
+            })
         }
-    });
-});
+
+        User.findById(tokenData.user._id)
+            .then(user => {
+                // Set password field to undefined.
+                user.password = undefined
+                res.json({
+                    user: user
+                })
+            })
+            .catch(err => {
+                res.status(500).json({
+                    message: "error validating token!",
+                    error: err
+                })
+                console.log(err)
+            })
+    })
+})
 
 // Export the router object as a module.
 module.exports = router;

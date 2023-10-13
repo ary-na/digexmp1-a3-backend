@@ -12,9 +12,9 @@ class Utils {
      * @returns {string} a hashed password.
      */
     hashPassword(password) {
-        const salt = crypto.randomBytes(16).toString("hex");
-        const hash = crypto.pbkdf2Sync(password, salt, 2048, 32, "sha512").toString("hex");
-        return [salt, hash].join("$");
+        const salt = crypto.randomBytes(16).toString("hex")
+        const hash = crypto.pbkdf2Sync(password, salt, 2048, 32, "sha512").toString("hex")
+        return [salt, hash].join("$")
     }
 
     /**
@@ -25,11 +25,11 @@ class Utils {
      */
     verifyPassword(password, original) {
         // Split the salt from the original password.
-        const salt = original.split("$")[0];
-        const originalHash = original.split("$")[1];
+        const salt = original.split("$")[0]
+        const originalHash = original.split("$")[1]
         // Create a hash using the provided password with the same salt as the original password.
-        const hash = crypto.pbkdf2Sync(password, salt, 2048, 32, "sha512").toString("hex");
-        return hash === originalHash;
+        const hash = crypto.pbkdf2Sync(password, salt, 2048, 32, "sha512").toString("hex")
+        return hash === originalHash
     }
 
     /**
@@ -38,7 +38,7 @@ class Utils {
      * @returns {string} a signed access token.
      */
     generateAccessToken(user) {
-        return jwt.sign({user: user}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "7d"});
+        return jwt.sign({user: user}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "7d"})
     }
 
     /**
@@ -49,13 +49,13 @@ class Utils {
      * @returns {*} a response or access to the next function.
      */
     authenticateToken(req, res, next) {
-        const authHeader = req.headers.authorization;
-        const token = authHeader.split(" ")[1] && authHeader;
+        let authHeader = req.headers["authorization"]
+        let token = authHeader && authHeader.split(" ")[1]
         // Check if token is falsy.
-        if (!token) {
+        if (token == null) {
             return res.status(401).json({
                 message: "unauthorised!"
-            });
+            })
         }
 
         // Verify the access token and continue to the next function.
@@ -63,11 +63,11 @@ class Utils {
             if (err) {
                 return res.status(401).json({
                     message: "unauthorised!"
-                });
+                })
             }
-            req.user = user;
-            next();
-        });
+            req.user = user
+            next()
+        })
     }
 
     /**
@@ -76,28 +76,26 @@ class Utils {
      * @param uploadPath for the file to be uploaded by the user.
      * @param callback function to set the file to the database.
      */
-    uploadFile(file, uploadPath, callback) {
+    async uploadFile(file, uploadPath, callback) {
         // Get the file extension.
-        const fileExt = file.name.split('.').pop();
+        const fileExt = file.name.split('.').pop()
         // Create a unique file name for the file.
-        const uniqueFilename = uuidv4 + '.' + fileExt;
+        const uniqueFilename = uuidv4() + '.' + fileExt
         // Set the upload path to "public > images" in the backend.
-        const uploadPathFull = path.join(uploadPath, uniqueFilename);
+        const uploadPathFull = path.join(uploadPath, uniqueFilename)
 
         // Move the file to the upload path.
-        file.mv(uploadPathFull, function (err) {
+        await file.mv(uploadPathFull, function (err) {
             if (err) {
-                console.log(err);
-                return false;
+                console.log(err)
+                return false
             }
             if (typeof callback === 'function') {
-                callback(uniqueFilename);
+                callback(uniqueFilename)
             }
-        }).then(() => {
-            console.log("File moved to the upload path!");
-        });
+        })
     }
 }
 
 // Export the Utils class as a module.
-module.exports = new Utils();
+module.exports = new Utils()
