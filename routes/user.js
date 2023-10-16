@@ -66,7 +66,7 @@ router.get('/:id', Utils.authenticateToken, async (req, res) => {
 // @access  Public
 router.post('/', async (req, res) => {
     // Check if body is missing.
-    if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.password) {
+    if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.password || !req.body.accessLevel) {
         return res.status(400).json({
             message: "Firstname, lastname, email, password, or access level is missing!"
         });
@@ -127,6 +127,7 @@ router.put('/:id', Utils.authenticateToken, async (req, res) => {
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
                 email: req.body.email,
+                bio: req.body.bio,
                 avatar: avatarFilename
             })
         })
@@ -135,7 +136,8 @@ router.put('/:id', Utils.authenticateToken, async (req, res) => {
         await updateUser({
             firstName: req.body.firstName,
             lastName: req.body.lastName,
-            email: req.body.email
+            email: req.body.email,
+            bio: req.body.bio
         })
     }
 

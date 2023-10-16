@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
     },
     accessLevel: {
         type: Number,
-        required: false
+        required: true
     },
 }, {timestamps: true});
 
