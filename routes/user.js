@@ -133,12 +133,7 @@ router.put('/:id', Utils.authenticateToken, async (req, res) => {
         })
     } else {
         // Update user if avatar file does not exist.
-        await updateUser({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            bio: req.body.bio
-        })
+        await updateUser(req.body)
     }
 
     // Find and update the user using the User model and return the updated user.

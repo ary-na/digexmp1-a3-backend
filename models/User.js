@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    newUser: {
+      type: Boolean,
+      default: true
+    },
 }, {timestamps: true});
 
 // Create middleware ------------------------------------------------------------------
