@@ -1,12 +1,12 @@
-// @file    ./routes/api/user.js
+// @file    ./routes/user.js
 
 // Setup dependencies for user routes.
-const express = require("express");
-const router = express.Router();
-const User = require("../models/User");
-const Utils = require("../Utils");
-const path = require("path");
-const {raw} = require("express");
+const express = require("express")
+const router = express.Router()
+const User = require("../models/User")
+const Utils = require("../Utils")
+const path = require("path")
+const {raw} = require("express")
 
 // GET -------------------------------------------------------------------------
 // @route   /user
@@ -16,16 +16,16 @@ router.get('/', Utils.authenticateToken, async (req, res) => {
     // Get all users from the User model.
     await User.find()
         .then(users => {
-            res.json(users);
+            res.json(users)
         })
-        .catch(err => {
-            res.status(500).json({
+        .catch(async err => {
+            await res.status(500).json({
                 message: "error finding user!",
                 error: err
-            });
-            console.log("error finding user!", err);
-        });
-});
+            })
+            await console.log("error finding user!", err)
+        })
+})
 
 // GET -------------------------------------------------------------------------
 // @route   /user/:id

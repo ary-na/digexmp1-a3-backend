@@ -28,17 +28,17 @@ app.use(fileUpload({
 
 // Setup routes ----------------------------------------------------------------
 
-// - User route
-const userRouter = require("./routes/user")
-app.use('/user', userRouter)
-
 // - Auth route
 const authRouter = require("./routes/auth")
 app.use('/auth', authRouter)
 
-// - Menu route
-const menuRouter = require("./routes/menu")
-app.use('/menu', menuRouter)
+// - User route
+const userRouter = require("./routes/user")
+app.use('/user', userRouter)
+
+// - Special route
+const specialRouter = require("./routes/special")
+app.use('/special', specialRouter)
 
 // Run app (Listen on port) ----------------------------------------------------
 app.listen(port, () => {

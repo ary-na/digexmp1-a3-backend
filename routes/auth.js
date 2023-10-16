@@ -1,4 +1,4 @@
-// @file    ./routes/api/auth.js
+// @file    ./routes/auth.js
 
 // Setup dependencies for auth routes.
 require("dotenv").config();
