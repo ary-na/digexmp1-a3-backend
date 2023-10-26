@@ -5,6 +5,7 @@ const express = require('express')
 const router = express.Router()
 const Utils = require('./../utils')
 const Special = require('../models/Special')
+const path = require("path");
 
 // GET -------------------------------------------------------------------------
 // @route   /special
@@ -30,6 +31,53 @@ router.get('/', Utils.authenticateToken, async (req, res) => {
             await console.log("error getting specials!", err)
         })
 })
+
+// POST ------------------------------------------------------------------------
+// @route   /special
+// @desc    Create a new special.
+// @access  Private
+router.post('/', Utils.authenticateToken, async (req, res) => {
+    // validate
+    if(Object.keys(req.body).length === 0){
+        return res.status(400).send({message: "special content can't be empty"})
+    }
+    // validate - check if image file exist
+    if(!req.files || !req.files.image){
+        return res.status(400).send({message: "Image can't be empty"})
+    }
+
+    console.log('req.body = ', req.body)
+
+    // image file must exist, upload, then create new haircut
+    let uploadPath = path.join(__dirname, '..', 'public', 'images')
+    await Utils.uploadFile(req.files.image, uploadPath, (uniqueFilename) => {
+        // create new haircut
+        let special = new Special({
+            name: req.body.name,
+            description: req.body.description,
+            price: req.body.price,
+            user: req.body.user,
+            image: uniqueFilename,
+            gender: req.body.gender,
+            length: req.body.length
+        })
+
+         special.save()
+            .then(async special => {
+                // success!
+                // return 201 status with user object
+                return res.status(201).json(special)
+            })
+            .catch(async err => {
+                console.log(err)
+                return res.status(500).send({
+                    message: "Problem creating haircut",
+                    error: err
+                })
+            })
+    })
+})
+
 
 // Export the router object as a module.
 module.exports = router
