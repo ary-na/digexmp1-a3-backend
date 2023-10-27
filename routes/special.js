@@ -55,7 +55,8 @@ router.post('/', Utils.authenticateToken, async (req, res) => {
             user: req.body.user,
             image: uniqueFilename,
             drinkType: req.body.drinkType,
-            brewMethod: req.body.brewMethod
+            brewMethod: req.body.brewMethod,
+            decaf: req.body.decaf
         })
 
         await special.save()

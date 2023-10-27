@@ -33,6 +33,10 @@ const specialSchema = new mongoose.Schema({
     brewMethod: {
         type: String,
         required: false
+    },
+    decaf: {
+        type: Boolean,
+        default: false
     }
 
 }, {timestamps: true})
