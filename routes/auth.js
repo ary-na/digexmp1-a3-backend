@@ -1,12 +1,12 @@
 // @file    ./routes/auth.js
 
 // Setup dependencies for auth routes.
-require("dotenv").config();
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
-const Utils = require("../Utils");
-const express = require("express");
-const router = express.Router();
+require("dotenv").config()
+const jwt = require("jsonwebtoken")
+const User = require("../models/User")
+const Utils = require("../Utils")
+const express = require("express")
+const router = express.Router()
 
 // POST ------------------------------------------------------------------------
 // @route   /login
@@ -72,17 +72,17 @@ router.get('/validate', async (req, res) => {
     if (!req.headers.authorization) {
         return res.status(400).json({
             message: "authorization token is missing!"
-        });
+        })
     }
 
     // Get authorization token from the header.
-    const token = req.headers.authorization.split(" ")[1];
+    const token = req.headers.authorization.split(" ")[1]
 
     // Decrypt and validate the authorization token.
     await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, tokenData) => {
         // Check if the token is not valid.
         if (err) {
-            console.log(err);
+            console.log(err)
             return res.status(401).json({
                 message: "unauthorized"
             })
@@ -107,4 +107,4 @@ router.get('/validate', async (req, res) => {
 })
 
 // Export the router object as a module.
-module.exports = router;
+module.exports = router

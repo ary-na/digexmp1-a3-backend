@@ -45,7 +45,7 @@ router.get('/:id', Utils.authenticateToken, async (req, res) => {
             if (!user) {
                 await res.status(404).json({
                     message: "user not found!"
-                });
+                })
             } else {
                 await res.json(user);
             }
@@ -54,10 +54,10 @@ router.get('/:id', Utils.authenticateToken, async (req, res) => {
             res.status(500).json({
                 message: "error finding user!",
                 error: err
-            });
+            })
             console.log("error finding user!", err);
-        });
-});
+        })
+})
 
 
 // POST ------------------------------------------------------------------------
@@ -69,7 +69,7 @@ router.post('/', async (req, res) => {
     if (!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.password || !req.body.accessLevel) {
         return res.status(400).json({
             message: "Firstname, lastname, email, password, or access level is missing!"
-        });
+        })
     }
 
     // Check if user exists.
@@ -77,33 +77,33 @@ router.post('/', async (req, res) => {
         if (user) {
             return res.status(400).json({
                 message: "user already exists!"
-            });
+            })
         }
 
         // Create a new user document using the User model.
-        const newUser = await new User(req.body);
+        const newUser = await new User(req.body)
 
         // Save the new user document.
         await newUser.save()
             .then(user => {
-                res.status(201).json(user);
+                res.status(201).json(user)
             })
             .catch(err => {
-                res.json(500).json({
+                res.status(500).json({
                     message: "error saving user!",
                     error: err
-                });
-                console.log("error saving user!", err);
-            });
+                })
+                console.log("error saving user!", err)
+            })
 
     }).catch(err => {
         res.status(500).json({
             message: "error creating user!",
             error: err
-        });
-        console.error(err);
-    });
-});
+        })
+        console.error(err)
+    })
+})
 
 // PUT -------------------------------------------------------------------------
 // @route   /user/:id
@@ -144,18 +144,18 @@ router.put('/:id', Utils.authenticateToken, async (req, res) => {
                 if (!user) {
                     await res.status(404).json({
                         message: "user not found!"
-                    });
+                    })
                 } else {
-                    await res.json(user);
+                    await res.json(user)
                 }
             })
             .catch(err => {
                 res.status(500).json({
                     message: "error updating user!",
                     error: err
-                });
-                console.log("error updating user!", err);
-            });
+                })
+                console.log("error updating user!", err)
+            })
     }
 })
 
@@ -169,16 +169,16 @@ router.delete("/:id", Utils.authenticateToken, async (req, res) => {
         .then(() => {
             res.json({
                 message: "user deleted!"
-            });
+            })
         })
         .catch(err => {
             res.status(500).json({
                 message: "error deleting user!",
                 error: err
-            });
-            console.log("error deleting user!", err);
-        });
-});
+            })
+            console.log("error deleting user!", err)
+        })
+})
 
 // Export the router object as a module.
-module.exports = router;
+module.exports = router

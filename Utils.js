@@ -1,9 +1,9 @@
 // Setup dependencies for the Utils class.
-require("dotenv").config();
-const crypto = require('crypto');
-const jwt = require("jsonwebtoken");
-const {v4: uuidv4} = require('uuid');
-const path = require('path');
+require("dotenv").config()
+const crypto = require('crypto')
+const jwt = require("jsonwebtoken")
+const {v4: uuidv4} = require('uuid')
+const path = require('path')
 
 class Utils {
     /**

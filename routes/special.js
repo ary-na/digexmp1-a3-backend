@@ -5,11 +5,11 @@ const express = require('express')
 const router = express.Router()
 const Utils = require('./../utils')
 const Special = require('../models/Special')
-const path = require("path");
+const path = require("path")
 
 // GET -------------------------------------------------------------------------
 // @route   /special
-// @desc    Get all specials.
+// @desc    Get specials by user id.
 // @access  Private
 router.get('/', Utils.authenticateToken, async (req, res) => {
     // Get all specials from the Special model.
@@ -37,43 +37,37 @@ router.get('/', Utils.authenticateToken, async (req, res) => {
 // @desc    Create a new special.
 // @access  Private
 router.post('/', Utils.authenticateToken, async (req, res) => {
-    // validate
-    if(Object.keys(req.body).length === 0){
-        return res.status(400).send({message: "special content can't be empty"})
-    }
-    // validate - check if image file exist
-    if(!req.files || !req.files.image){
-        return res.status(400).send({message: "Image can't be empty"})
-    }
+    // Check if body is empty.
+    if (Object.keys(req.body).length === 0)
+        return res.status(400).send({message: "special details missing!"})
 
-    console.log('req.body = ', req.body)
+    // Check if image file exists.
+    if (!req.files || !req.files.image)
+        return res.status(400).send({message: "image file missing!"})
 
-    // image file must exist, upload, then create new haircut
+    // Upload file and create special object using Special model.
     let uploadPath = path.join(__dirname, '..', 'public', 'images')
-    await Utils.uploadFile(req.files.image, uploadPath, (uniqueFilename) => {
-        // create new haircut
+    await Utils.uploadFile(req.files.image, uploadPath, async (uniqueFilename) => {
         let special = new Special({
             name: req.body.name,
             description: req.body.description,
             price: req.body.price,
             user: req.body.user,
             image: uniqueFilename,
-            gender: req.body.gender,
-            length: req.body.length
+            drinkType: req.body.drinkType,
+            brewMethod: req.body.brewMethod
         })
 
-         special.save()
+        await special.save()
             .then(async special => {
-                // success!
-                // return 201 status with user object
                 return res.status(201).json(special)
             })
             .catch(async err => {
-                console.log(err)
-                return res.status(500).send({
-                    message: "Problem creating haircut",
+                res.status(500).json({
+                    message: "error saving special!",
                     error: err
                 })
+                console.log("error saving special!", err)
             })
     })
 })
