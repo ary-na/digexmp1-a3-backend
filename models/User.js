@@ -4,6 +4,7 @@
 require("mongoose-type-email")
 const mongoose = require("mongoose")
 const Utils = require("./../Utils")
+const {Schema} = require("mongoose");
 
 // Create schema ---------------------------------------------------------------
 const userSchema = new mongoose.Schema({
@@ -36,9 +37,18 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     newUser: {
-      type: Boolean,
-      default: true
+        type: Boolean,
+        default: true
     },
+    favouriteDrinks: [
+        {type: Schema.Types.ObjectId, ref: 'Drink'}
+    ],
+    favouriteSpecials: [
+        {type: Schema.Types.ObjectId, ref: 'Special'}
+    ],
+    favouriteBaristas: [
+        {type: Schema.Types.ObjectId, ref: this.type}
+    ],
 }, {timestamps: true})
 
 // Create middleware ------------------------------------------------------------------

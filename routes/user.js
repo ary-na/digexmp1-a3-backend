@@ -6,7 +6,7 @@ const router = express.Router()
 const User = require("../models/User")
 const Utils = require("../Utils")
 const path = require("path")
-const {raw} = require("express")
+const {raw, json} = require("express")
 
 // GET -------------------------------------------------------------------------
 // @route   /user
@@ -20,10 +20,10 @@ router.get('/', Utils.authenticateToken, async (req, res) => {
         })
         .catch(async err => {
             await res.status(500).json({
-                message: "error finding user!",
+                message: "error finding users!",
                 error: err
             })
-            await console.log("error finding user!", err)
+            await console.log("error finding users!", err)
         })
 })
 
@@ -35,11 +35,11 @@ router.get('/:id', Utils.authenticateToken, async (req, res) => {
 
     if (!req.params.id) {
         return res.status(401).json({
-            message: "unauthorised"
+            message: "id is missing!"
         })
     }
 
-    await User.findById(req.params.id)
+    await User.findById(req.params.id).populate('favouriteBaristas')
         .then(async user => {
             // Check if user exist in the db.
             if (!user) {
@@ -56,6 +56,43 @@ router.get('/:id', Utils.authenticateToken, async (req, res) => {
                 error: err
             })
             console.log("error finding user!", err);
+        })
+})
+
+// GET -------------------------------------------------------------------------
+// @route   /user/access/:accessLevel
+// @desc    Get users by access level.
+// @access  Private
+router.get('/access/:accessLevel', Utils.authenticateToken, async (req, res) => {
+    if (!req.params.accessLevel) {
+        return res.status(401).json({
+            message: "access level is missing!"
+        })
+    }
+
+    await User.find({accessLevel: req.params.accessLevel}, {
+        _id: 1,
+        firstName: 1,
+        lastName: 1,
+        avatar: 1,
+        bio: 1
+    })
+        .then(async users => {
+            // Check if any users with access level exist in the db.
+            if (!users) {
+                await res.status(404).json({
+                    message: "users not found!"
+                })
+            } else {
+                await res.json(users);
+            }
+        })
+        .catch(async err => {
+            await res.status(500).json({
+                message: "error finding users!",
+                error: err
+            })
+            console.log("error finding users!", err)
         })
 })
 
@@ -157,6 +194,127 @@ router.put('/:id', Utils.authenticateToken, async (req, res) => {
                 console.log("error updating user!", err)
             })
     }
+})
+
+
+// PUT -------------------------------------------------------------------------
+// @route   /user/add/favouriteBarista
+// @desc    Add a user to favourite barista array.
+// @access  Private
+router.put('/add/favouriteBarista', Utils.authenticateToken, async (req, res) => {
+    // Check if barista id is missing.
+    if (!req.body.userId) {
+        return res.status(400).json({
+            message: "id is missing!"
+        })
+    }
+
+    // Add barista id to favourite baristas array using array push.
+    await User.updateOne({_id: req.user.user._id}, {
+        $addToSet: {favouriteBaristas: req.body.userId}
+    })
+        .then(async () => {
+            await res.json({
+                message: "user added to favourites!"
+            })
+        })
+        .catch(async err => {
+            await res.status(500).json({
+                message: "error adding barista to favourites!",
+                error: err
+            })
+            console.log(err)
+        })
+})
+
+// PUT -------------------------------------------------------------------------
+// @route   /user/remove/favouriteBarista
+// @desc    Remove a user from favourite barista array.
+// @access  Private
+router.put('/remove/favouriteBarista', Utils.authenticateToken, async (req, res) => {
+    // Check if barista id is missing.
+    if (!req.body.userId) {
+        return res.status(400).json({
+            message: "id is missing!"
+        })
+    }
+
+    // Remove barista id from favourite baristas array using array pull.
+    await User.updateOne({_id: req.user.user._id}, {
+        $pull: {favouriteBaristas: req.body.userId}
+    })
+        .then(async () => {
+            await res.json({
+                message: "user removed from favourites!"
+            })
+        })
+        .catch(async err => {
+            await res.status(500).json({
+                message: "error removing barista from favourites!",
+                error: err
+            })
+            console.log(err)
+        })
+})
+
+// PUT -------------------------------------------------------------------------
+// @route   /user/add/favouriteSpecial
+// @desc    Add a special to favourite special array.
+// @access  Private
+router.put('/add/favouriteSpecial', Utils.authenticateToken, async (req, res) => {
+    // Check if barista id is missing.
+    if (!req.body.specialId) {
+        return res.status(400).json({
+            message: "id is missing!"
+        })
+    }
+
+    // Add barista id to favourite baristas array using array push.
+    await User.updateOne({_id: req.user.user._id}, {
+        $addToSet: {favouriteSpecials: req.body.specialId},
+    }).exec()
+        .then(async () => {
+            await res.json({
+                message: "special added to favourites!"
+            })
+        })
+        .catch(async err => {
+            await res.status(500).json({
+                message: "error adding special to favourites!",
+                error: err
+            })
+            console.log(err)
+        })
+})
+
+// PUT -------------------------------------------------------------------------
+// @route   /user/remove/favouriteSpecial
+// @desc    Remove a special from favourite specials array.
+// @access  Private
+router.put('/remove/favouriteSpecial', Utils.authenticateToken, async (req, res) => {
+    // Check if special id is missing.
+    if (!req.body.specialId) {
+        return res.status(400).json({
+            message: "id is missing!"
+        })
+    }
+
+    // Remove special id from favourite specials array using array pull.
+    await User.updateOne({_id: req.user.user._id}, {
+        $pull: {favouriteSpecials: req.body.specialId}
+    })
+        .then(async () => {
+            await res.json({
+                message: "special removed from favourites!"
+            })
+        })
+        .catch(async err => {
+            await res.status(500).json({
+                message: "error removing special from favourites!",
+                error: err
+            })
+            console.log(err)
+        })
 })
 
 // DELETE ----------------------------------------------------------------------

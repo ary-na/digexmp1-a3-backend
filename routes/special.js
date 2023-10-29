@@ -6,14 +6,40 @@ const router = express.Router()
 const Utils = require('./../utils')
 const Special = require('../models/Special')
 const path = require("path")
+const User = require("../models/User");
 
 // GET -------------------------------------------------------------------------
 // @route   /special
-// @desc    Get specials by user id.
+// @desc    Get all specials.
 // @access  Private
 router.get('/', Utils.authenticateToken, async (req, res) => {
     // Get all specials from the Special model.
     Special.find().populate('user', '_id firstName lastName')
+        .then(async specials => {
+            // Check if specials exist in the db.
+            if (!specials) {
+                return res.status(404).json({
+                    message: "specials not found!"
+                })
+            }
+            await res.json(specials)
+        })
+        .catch(async err => {
+            await res.status(500).json({
+                message: "error getting specials!",
+                error: err
+            })
+            await console.log("error getting specials!", err)
+        })
+})
+
+// GET -------------------------------------------------------------------------
+// @route   /special/:id
+// @desc    Get specials by user id.
+// @access  Private
+router.get('/:userId', Utils.authenticateToken, async (req, res) => {
+    // Get all specials from the Special model.
+    Special.find({user: {_id: req.params.userId}}).populate('user', '_id firstName lastName')
         .then(async specials => {
             // Check if specials exist in the db.
             if (!specials) {
@@ -71,6 +97,28 @@ router.post('/', Utils.authenticateToken, async (req, res) => {
                 console.log("error saving special!", err)
             })
     })
+})
+
+
+// DELETE ----------------------------------------------------------------------
+// @route   /special/:id
+// @desc    Delete a special by id.
+// @access  Private
+router.delete("/:id", Utils.authenticateToken, async (req, res) => {
+    // Delete the user using the User model.
+    await Special.findByIdAndDelete(req.params.id)
+        .then(() => {
+            res.json({
+                message: "special deleted!"
+            })
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: "error deleting special!",
+                error: err
+            })
+            console.log("error deleting special!", err)
+        })
 })
 
 
