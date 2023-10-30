@@ -35,9 +35,34 @@ router.get('/', Utils.authenticateToken, async (req, res) => {
 
 // GET -------------------------------------------------------------------------
 // @route   /special/:id
+// @desc    Get a special by id.
+// @access  Private
+router.get('/:specialId', Utils.authenticateToken, async (req, res) => {
+    // Get all specials from the Special model.
+    Special.findById(req.params.specialId)
+        .then(async special => {
+            // Check if special exist in the db.
+            if (!special) {
+                return res.status(404).json({
+                    message: "special not found!"
+                })
+            }
+            await res.json(special)
+        })
+        .catch(async err => {
+            await res.status(500).json({
+                message: "error getting special!",
+                error: err
+            })
+            await console.log("error getting special!", err)
+        })
+})
+
+// GET -------------------------------------------------------------------------
+// @route   /special/by/:id
 // @desc    Get specials by user id.
 // @access  Private
-router.get('/:userId', Utils.authenticateToken, async (req, res) => {
+router.get('/by/:userId', Utils.authenticateToken, async (req, res) => {
     // Get all specials from the Special model.
     Special.find({user: {_id: req.params.userId}}).populate('user', '_id firstName lastName')
         .then(async specials => {
@@ -97,6 +122,63 @@ router.post('/', Utils.authenticateToken, async (req, res) => {
                 console.log("error saving special!", err)
             })
     })
+})
+
+
+// PUT -------------------------------------------------------------------------
+// @route   /special/:id
+// @desc    Update a special by id.
+// @access  Private
+router.put('/:id', Utils.authenticateToken, async (req, res) => {
+    // Check if body is missing.
+    if (!req.body)
+        return res.status(400).send("special details missing!")
+
+    let imageFilename = null
+
+    // Check if image file exists.
+    if (req.files && req.files.image) {
+        // Upload image.
+        let uploadPath = path.join(__dirname, '..', 'public', 'images')
+        await Utils.uploadFile(req.files.image, uploadPath, (uniqueFilename) => {
+            imageFilename = uniqueFilename
+            // Update user if image file exists.
+            updateSpecial({
+                name: req.body.name,
+                description: req.body.description,
+                price: req.body.price,
+                image: imageFilename,
+                drinkType: req.body.drinkType,
+                brewMethod: req.body.brewMethod,
+                decaf: req.body.decaf
+            })
+        })
+    } else {
+        // Update special if image file does not exist.
+        await updateSpecial(req.body)
+    }
+
+    // Find and update the special using the Special model and return the updated special.
+    async function updateSpecial(special) {
+        Special.findByIdAndUpdate(req.params.id, special, {new: true})
+            .then(async special => {
+                // Check if special exist in the db.
+                if (!special) {
+                    await res.status(404).json({
+                        message: "special not found!"
+                    })
+                } else {
+                    await res.json(special)
+                }
+            })
+            .catch(err => {
+                res.status(500).json({
+                    message: "error updating special!",
+                    error: err
+                })
+                console.log("error updating special!", err)
+            })
+    }
 })
 
 
