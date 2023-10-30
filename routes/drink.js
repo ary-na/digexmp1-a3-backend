@@ -1,105 +1,105 @@
-// @file    ./routes/special.js
+// @file    ./routes/drink.js
 
 // Setup dependencies for user routes.
 const express = require('express')
 const router = express.Router()
 const Utils = require('./../utils')
-const Special = require('../models/Special')
+const Drink = require('../models/Drink')
 const path = require("path")
 const User = require("../models/User");
 
 // GET -------------------------------------------------------------------------
-// @route   /special
-// @desc    Get all specials.
+// @route   /drink
+// @desc    Get all drinks.
 // @access  Private
 router.get('/', Utils.authenticateToken, async (req, res) => {
-    // Get all specials from the Special model.
-    Special.find().populate('user', '_id firstName lastName')
-        .then(async specials => {
-            // Check if specials exist in the db.
-            if (!specials) {
+    // Get all drinks from the Drink model.
+    Drink.find().populate('user', '_id firstName lastName')
+        .then(async drinks => {
+            // Check if drinks exist in the db.
+            if (!drinks) {
                 return res.status(404).json({
-                    message: "specials not found!"
+                    message: "drinks not found!"
                 })
             }
-            await res.json(specials)
+            await res.json(drinks)
         })
         .catch(async err => {
             await res.status(500).json({
-                message: "error getting specials!",
+                message: "error getting drinks!",
                 error: err
             })
-            await console.log("error getting specials!", err)
+            await console.log("error getting drinks!", err)
         })
 })
 
 // GET -------------------------------------------------------------------------
-// @route   /special/:id
-// @desc    Get a special by id.
+// @route   /drink/:id
+// @desc    Get a drink by id.
 // @access  Private
-router.get('/:specialId', Utils.authenticateToken, async (req, res) => {
-    // Get all specials from the Special model.
-    Special.findById(req.params.specialId)
-        .then(async special => {
-            // Check if special exist in the db.
-            if (!special) {
+router.get('/:drinkId', Utils.authenticateToken, async (req, res) => {
+    // Get all drinks from the Drink model.
+    Drink.findById(req.params.drinkId)
+        .then(async drink => {
+            // Check if drink exist in the db.
+            if (!drink) {
                 return res.status(404).json({
-                    message: "special not found!"
+                    message: "drink not found!"
                 })
             }
-            await res.json(special)
+            await res.json(drink)
         })
         .catch(async err => {
             await res.status(500).json({
-                message: "error getting special!",
+                message: "error getting drink!",
                 error: err
             })
-            await console.log("error getting special!", err)
+            await console.log("error getting drink!", err)
         })
 })
 
 // GET -------------------------------------------------------------------------
-// @route   /special/by/:id
-// @desc    Get specials by user id.
+// @route   /drink/by/:id
+// @desc    Get drinks by user id.
 // @access  Private
 router.get('/by/:userId', Utils.authenticateToken, async (req, res) => {
-    // Get all specials from the Special model.
-    Special.find({user: {_id: req.params.userId}}).populate('user', '_id firstName lastName')
-        .then(async specials => {
-            // Check if specials exist in the db.
-            if (!specials) {
+    // Get all drinks from the Drink model.
+    Drink.find({user: {_id: req.params.userId}}).populate('user', '_id firstName lastName')
+        .then(async drinks => {
+            // Check if drinks exist in the db.
+            if (!drinks) {
                 return res.status(404).json({
-                    message: "specials not found!"
+                    message: "drinks not found!"
                 })
             }
-            await res.json(specials)
+            await res.json(drinks)
         })
         .catch(async err => {
             await res.status(500).json({
-                message: "error getting specials!",
+                message: "error getting drinks!",
                 error: err
             })
-            await console.log("error getting specials!", err)
+            await console.log("error getting drinks!", err)
         })
 })
 
 // POST ------------------------------------------------------------------------
-// @route   /special
-// @desc    Create a new special.
+// @route   /drink
+// @desc    Create a new drink.
 // @access  Private
 router.post('/', Utils.authenticateToken, async (req, res) => {
     // Check if body is empty.
     if (Object.keys(req.body).length === 0)
-        return res.status(400).send({message: "special details missing!"})
+        return res.status(400).send({message: "drink details missing!"})
 
     // Check if image file exists.
     if (!req.files || !req.files.image)
         return res.status(400).send({message: "image file missing!"})
 
-    // Upload file and create special object using Special model.
+    // Upload file and create drink object using Drink model.
     let uploadPath = path.join(__dirname, '..', 'public', 'images')
     await Utils.uploadFile(req.files.image, uploadPath, async (uniqueFilename) => {
-        let special = new Special({
+        let drink = new Drink({
             name: req.body.name,
             description: req.body.description,
             price: req.body.price,
@@ -107,32 +107,33 @@ router.post('/', Utils.authenticateToken, async (req, res) => {
             image: uniqueFilename,
             drinkType: req.body.drinkType,
             brewMethod: req.body.brewMethod,
-            decaf: req.body.decaf
+            decaf: req.body.decaf,
+            special: true
         })
 
-        await special.save()
-            .then(async special => {
-                return res.status(201).json(special)
+        await drink.save()
+            .then(async drink => {
+                return res.status(201).json(drink)
             })
             .catch(async err => {
                 res.status(500).json({
-                    message: "error saving special!",
+                    message: "error saving drink!",
                     error: err
                 })
-                console.log("error saving special!", err)
+                console.log("error saving drink!", err)
             })
     })
 })
 
 
 // PUT -------------------------------------------------------------------------
-// @route   /special/:id
-// @desc    Update a special by id.
+// @route   /drink/:id
+// @desc    Update a drink by id.
 // @access  Private
 router.put('/:id', Utils.authenticateToken, async (req, res) => {
     // Check if body is missing.
     if (!req.body)
-        return res.status(400).send("special details missing!")
+        return res.status(400).send("drink details missing!")
 
     let imageFilename = null
 
@@ -142,8 +143,8 @@ router.put('/:id', Utils.authenticateToken, async (req, res) => {
         let uploadPath = path.join(__dirname, '..', 'public', 'images')
         await Utils.uploadFile(req.files.image, uploadPath, (uniqueFilename) => {
             imageFilename = uniqueFilename
-            // Update user if image file exists.
-            updateSpecial({
+            // Update drink if image file exists.
+            updateDrink({
                 name: req.body.name,
                 description: req.body.description,
                 price: req.body.price,
@@ -154,52 +155,52 @@ router.put('/:id', Utils.authenticateToken, async (req, res) => {
             })
         })
     } else {
-        // Update special if image file does not exist.
-        await updateSpecial(req.body)
+        // Update drink if image file does not exist.
+        await updateDrink(req.body)
     }
 
-    // Find and update the special using the Special model and return the updated special.
-    async function updateSpecial(special) {
-        Special.findByIdAndUpdate(req.params.id, special, {new: true})
-            .then(async special => {
-                // Check if special exist in the db.
-                if (!special) {
+    // Find and update the drink using the Drink model and return the updated drink.
+    async function updateDrink(drink) {
+        Drink.findByIdAndUpdate(req.params.id, drink, {new: true})
+            .then(async drink => {
+                // Check if drink exist in the db.
+                if (!drink) {
                     await res.status(404).json({
-                        message: "special not found!"
+                        message: "drink not found!"
                     })
                 } else {
-                    await res.json(special)
+                    await res.json(drink)
                 }
             })
             .catch(err => {
                 res.status(500).json({
-                    message: "error updating special!",
+                    message: "error updating drink!",
                     error: err
                 })
-                console.log("error updating special!", err)
+                console.log("error updating drink!", err)
             })
     }
 })
 
 
 // DELETE ----------------------------------------------------------------------
-// @route   /special/:id
-// @desc    Delete a special by id.
+// @route   /drink/:id
+// @desc    Delete a drink by id.
 // @access  Private
 router.delete("/:id", Utils.authenticateToken, async (req, res) => {
-    // Delete the user using the User model.
-    await Special.findByIdAndDelete(req.params.id)
+    // Delete the drink using the Drink model.
+    await Drink.findByIdAndDelete(req.params.id)
         .then(() => {
             res.json({
-                message: "special deleted!"
+                message: "drink deleted!"
             })
         })
         .catch(err => {
             res.status(500).json({
-                message: "error deleting special!",
+                message: "error deleting drink!",
                 error: err
             })
-            console.log("error deleting special!", err)
+            console.log("error deleting drink!", err)
         })
 })
 

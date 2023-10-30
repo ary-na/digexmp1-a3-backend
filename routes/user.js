@@ -258,29 +258,29 @@ router.put('/remove/favouriteBarista', Utils.authenticateToken, async (req, res)
 })
 
 // PUT -------------------------------------------------------------------------
-// @route   /user/add/favouriteSpecial
-// @desc    Add a special to favourite special array.
+// @route   /user/add/favouriteDrink
+// @desc    Add a drink to favourite drinks array.
 // @access  Private
-router.put('/add/favouriteSpecial', Utils.authenticateToken, async (req, res) => {
-    // Check if barista id is missing.
-    if (!req.body.specialId) {
+router.put('/add/favouriteDrink', Utils.authenticateToken, async (req, res) => {
+    // Check if drink id is missing.
+    if (!req.body.drinkId) {
         return res.status(400).json({
             message: "id is missing!"
         })
     }
 
-    // Add barista id to favourite baristas array using array push.
+    // Add drink id to favourite drinks array using array push.
     await User.updateOne({_id: req.user.user._id}, {
-        $addToSet: {favouriteSpecials: req.body.specialId},
+        $addToSet: {favouriteDrinks: req.body.drinkId},
     }).exec()
         .then(async () => {
             await res.json({
-                message: "special added to favourites!"
+                message: "drink added to favourites!"
             })
         })
         .catch(async err => {
             await res.status(500).json({
-                message: "error adding special to favourites!",
+                message: "error adding drink to favourites!",
                 error: err
             })
             console.log(err)
@@ -288,29 +288,29 @@ router.put('/add/favouriteSpecial', Utils.authenticateToken, async (req, res) =>
 })
 
 // PUT -------------------------------------------------------------------------
-// @route   /user/remove/favouriteSpecial
-// @desc    Remove a special from favourite specials array.
+// @route   /user/remove/favouriteDrink
+// @desc    Remove a drink from favourite drinks array.
 // @access  Private
-router.put('/remove/favouriteSpecial', Utils.authenticateToken, async (req, res) => {
-    // Check if special id is missing.
-    if (!req.body.specialId) {
+router.put('/remove/favouriteDrink', Utils.authenticateToken, async (req, res) => {
+    // Check if drink id is missing.
+    if (!req.body.drinkId) {
         return res.status(400).json({
             message: "id is missing!"
         })
     }
 
-    // Remove special id from favourite specials array using array pull.
+    // Remove drink id from favourite drinks array using array pull.
     await User.updateOne({_id: req.user.user._id}, {
-        $pull: {favouriteSpecials: req.body.specialId}
+        $pull: {favouriteDrinks: req.body.drinkId}
     })
         .then(async () => {
             await res.json({
-                message: "special removed from favourites!"
+                message: "drink removed from favourites!"
             })
         })
         .catch(async err => {
             await res.status(500).json({
-                message: "error removing special from favourites!",
+                message: "error removing drink from favourites!",
                 error: err
             })
             console.log(err)

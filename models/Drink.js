@@ -1,11 +1,11 @@
-// @file    ./models/Special.js
+// @file    ./models/Drink.js
 
 // Setup dependencies to create the user model.
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 // Create schema ---------------------------------------------------------------
-const specialSchema = new mongoose.Schema({
+const drinkSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
@@ -19,7 +19,7 @@ const specialSchema = new mongoose.Schema({
     },
     user: {
         type: Schema.Types.ObjectId,
-        required: true,
+        required: false,
         ref: 'User'
     },
     image: {
@@ -28,13 +28,17 @@ const specialSchema = new mongoose.Schema({
     },
     drinkType: {
         type: String,
-        required: false
+        required: true
     },
     brewMethod: {
         type: String,
-        required: false
+        required: true
     },
     decaf: {
+        type: Boolean,
+        default: false
+    },
+    special: {
         type: Boolean,
         default: false
     }
@@ -43,8 +47,8 @@ const specialSchema = new mongoose.Schema({
 
 
 // Create mongoose model -------------------------------------------------------
-const specialModel = mongoose.model('Special', specialSchema, "specials")
+const drinkModel = mongoose.model('Drink', drinkSchema, "drinks")
 
 // Export the User model as a module.
-module.exports = specialModel
+module.exports = drinkModel
 

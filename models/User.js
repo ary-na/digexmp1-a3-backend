@@ -43,12 +43,13 @@ const userSchema = new mongoose.Schema({
     favouriteDrinks: [
         {type: Schema.Types.ObjectId, ref: 'Drink'}
     ],
-    favouriteSpecials: [
-        {type: Schema.Types.ObjectId, ref: 'Special'}
-    ],
     favouriteBaristas: [
         {type: Schema.Types.ObjectId, ref: this.type}
     ],
+    cart: [{
+        drinkId: {type: Schema.Types.ObjectId, ref: 'Drink'},
+        quantity: {type: Number, default: 1}
+    }]
 }, {timestamps: true})
 
 // Create middleware ------------------------------------------------------------------

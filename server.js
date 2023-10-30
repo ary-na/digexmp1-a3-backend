@@ -36,9 +36,9 @@ app.use('/auth', authRouter)
 const userRouter = require("./routes/user")
 app.use('/user', userRouter)
 
-// - Special route
-const specialRouter = require("./routes/special")
-app.use('/special', specialRouter)
+// - Drink route
+const drinkRouter = require("./routes/drink")
+app.use('/drink', drinkRouter)
 
 // Run app (Listen on port) ----------------------------------------------------
 app.listen(port, () => {
