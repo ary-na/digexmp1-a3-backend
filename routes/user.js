@@ -317,6 +317,66 @@ router.put('/remove/favouriteDrink', Utils.authenticateToken, async (req, res) =
         })
 })
 
+// PUT -------------------------------------------------------------------------
+// @route   /user/add/cart
+// @desc    Add a drink to the cart array.
+// @access  Private
+router.put('/add/cart', Utils.authenticateToken, async (req, res) => {
+    // Check if drink id is missing.
+    if (!req.body.drinkId) {
+        return res.status(400).json({
+            message: "id is missing!"
+        })
+    }
+
+    // Add drink id to favourite drinks array using array push.
+    await User.updateOne({_id: req.user.user._id}, {
+        $addToSet: {cart: req.body.drinkId},
+    }).exec()
+        .then(async () => {
+            await res.json({
+                message: "drink added to cart!"
+            })
+        })
+        .catch(async err => {
+            await res.status(500).json({
+                message: "error adding drink to cart!",
+                error: err
+            })
+            console.log(err)
+        })
+})
+
+// PUT -------------------------------------------------------------------------
+// @route   /user/remove/cart
+// @desc    Remove a drink from the cart array.
+// @access  Private
+router.put('/remove/cart', Utils.authenticateToken, async (req, res) => {
+    // Check if drink id is missing.
+    if (!req.body.drinkId) {
+        return res.status(400).json({
+            message: "id is missing!"
+        })
+    }
+
+    // Remove drink id from cart array using array pull.
+    await User.updateOne({_id: req.user.user._id}, {
+        $pull: {cart: req.body.drinkId},
+    }).exec()
+        .then(async () => {
+            await res.json({
+                message: "drink removed from cart!"
+            })
+        })
+        .catch(async err => {
+            await res.status(500).json({
+                message: "error removing drink from cart!",
+                error: err
+            })
+            console.log(err)
+        })
+})
+
 // DELETE ----------------------------------------------------------------------
 // @route   /user/:id
 // @desc    Delete a user by id.
