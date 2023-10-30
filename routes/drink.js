@@ -34,6 +34,31 @@ router.get('/', Utils.authenticateToken, async (req, res) => {
 })
 
 // GET -------------------------------------------------------------------------
+// @route   /drink/special
+// @desc    Get all special drinks.
+// @access  Private
+router.get('/special', Utils.authenticateToken, async (req, res) => {
+    // Get all specials from the Drink model.
+    Drink.find({special: true}).populate('user', '_id firstName lastName')
+        .then(async specials => {
+            // Check if specials exist in the db.
+            if (!specials) {
+                return res.status(404).json({
+                    message: "specials not found!"
+                })
+            }
+            await res.json(specials)
+        })
+        .catch(async err => {
+            await res.status(500).json({
+                message: "error getting specials!",
+                error: err
+            })
+            await console.log("error getting specials!", err)
+        })
+})
+
+// GET -------------------------------------------------------------------------
 // @route   /drink/:id
 // @desc    Get a drink by id.
 // @access  Private
@@ -151,11 +176,13 @@ router.put('/:id', Utils.authenticateToken, async (req, res) => {
                 image: imageFilename,
                 drinkType: req.body.drinkType,
                 brewMethod: req.body.brewMethod,
-                decaf: req.body.decaf
+                decaf: !req.body.decaf ? false: req.body.decaf
             })
         })
     } else {
         // Update drink if image file does not exist.
+        if(!req.body.decaf)
+            req.body.decaf = false
         await updateDrink(req.body)
     }
 
