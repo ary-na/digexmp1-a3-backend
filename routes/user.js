@@ -39,7 +39,10 @@ router.get('/:id', Utils.authenticateToken, async (req, res) => {
         })
     }
 
-    await User.findById(req.params.id).populate('favouriteBaristas', '_id firstName lastName avatar bio').populate('favouriteDrinks')
+    await User.findById(req.params.id)
+        .populate('favouriteBaristas', '_id firstName lastName avatar bio')
+        .populate('favouriteDrinks')
+        .populate('cart', '_id name description price user image drinkType')
         .then(async user => {
             // Check if user exist in the db.
             if (!user) {

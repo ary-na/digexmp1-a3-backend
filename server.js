@@ -40,6 +40,10 @@ app.use('/user', userRouter)
 const drinkRouter = require("./routes/drink")
 app.use('/drink', drinkRouter)
 
+// - Order route
+const orderRouter = require("./routes/order")
+app.use('/order', orderRouter)
+
 // Run app (Listen on port) ----------------------------------------------------
 app.listen(port, () => {
     console.log(`The app is running on port ${port}.`)
