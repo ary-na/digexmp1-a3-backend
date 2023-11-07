@@ -20,7 +20,7 @@ const orderSchema = new mongoose.Schema({
     },
     drinks: [
         {
-            drink: {
+           _id: {
                 type: Schema.Types.ObjectId,
                 ref: 'Drink',
                 required: true
@@ -29,18 +29,13 @@ const orderSchema = new mongoose.Schema({
                 type: Number,
                 required: true
             }
-        },
+        }
     ],
     user: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'User'
     },
-    barista: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: 'User'
-    }
 }, {timestamps: true})
 
 

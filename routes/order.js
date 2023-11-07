@@ -22,6 +22,10 @@ router.post('/', Utils.authenticateToken, async (req, res) => {
     // Create a new order document using the Order model.
     const newOrder = await new Order(req.body)
 
+    // Push order items to the drinks array.
+    for(let i = 0; i < req.body.items.length; i++)
+        newOrder.drinks.push({quantity: req.body.quantities[i], _id: req.body.items[i]})
+
     // Save the new user document.
     await newOrder.save()
         .then(async order => {
