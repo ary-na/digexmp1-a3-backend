@@ -26,7 +26,7 @@ const drinkSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    drinkType: {
+    type: {
         type: String,
         required: true
     },
