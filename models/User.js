@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema({
         {type: Schema.Types.ObjectId, ref: 'Drink'}
     ],
     favouriteBaristas: [
-        {type: Schema.Types.ObjectId, ref: this.type}
+        {type: Schema.Types.ObjectId, ref: 'User'}
     ],
     cart: [
         {type: Schema.Types.ObjectId, ref: 'Drink'}

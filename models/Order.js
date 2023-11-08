@@ -31,11 +31,20 @@ const orderSchema = new mongoose.Schema({
             }
         }
     ],
+    total: {
+      type: Number,
+      required: true
+    },
     user: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'User'
     },
+    barista: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
+    }
 }, {timestamps: true})
 
 
