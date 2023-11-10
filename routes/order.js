@@ -3,7 +3,7 @@
 // Setup dependencies for order routes.
 const express = require('express')
 const router = express.Router()
-const Utils = require('./../utils')
+const Utils = require('../Utils')
 const Order = require('../models/Order')
 const path = require("path")
 const User = require("../models/User");

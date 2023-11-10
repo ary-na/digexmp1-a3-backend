@@ -3,7 +3,7 @@
 // Setup dependencies for user routes.
 const express = require('express')
 const router = express.Router()
-const Utils = require('./../Utils')
+const Utils = require('../Utils')
 const Drink = require('../models/Drink')
 const path = require("path")
 const User = require("../models/User");
