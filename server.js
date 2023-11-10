@@ -30,7 +30,7 @@ app.use(fileUpload({
 
 // - Homepage route
 app.get('/', (req, res) => {
-    res.send("Homepage");
+    res.send("coffee on api homepage");
 });
 
 // - Auth route
