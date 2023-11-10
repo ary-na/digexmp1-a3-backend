@@ -10,7 +10,44 @@ const User = require("../models/User");
 const {populate} = require("dotenv");
 
 // GET -------------------------------------------------------------------------
-// @route   /order/:id/:accessLevel
+// @route   /order/last/:id
+// @desc    Get last order by customer id.
+// @access  Private
+router.get('/last/:id', Utils.authenticateToken, async (req, res) => {
+    // Check if header is missing.
+    if (!req.params.id) {
+        return res.status(401).json({
+            message: "id is missing!"
+        })
+    }
+
+    // Get last order form the Order model by user id.
+    Order.findOne(
+        {user: {_id: req.params.id}
+    }).sort({date: 'desc'})
+        .populate('user', '_id firstName lastName')
+        .populate('barista', '_id firstName lastName')
+        .populate('drinks._id')
+        .then(async order => {
+            // Check if order exist in the db.
+            if (!order) {
+                return res.status(201).json({
+                    message: "order not found!"
+                })
+            }
+            await res.json(order)
+        })
+        .catch(async err => {
+            await res.status(500).json({
+                message: "error getting order!",
+                error: err
+            })
+            await console.log("error getting order!", err)
+        })
+})
+
+// GET -------------------------------------------------------------------------
+// @route   /order/customer/:id
 // @desc    Get orders by customer id.
 // @access  Private
 router.get('/customer/:id', Utils.authenticateToken, async (req, res) => {
@@ -46,7 +83,7 @@ router.get('/customer/:id', Utils.authenticateToken, async (req, res) => {
 })
 
 // GET -------------------------------------------------------------------------
-// @route   /order/:id/:accessLevel
+// @route   /order/barista/:id
 // @desc    Get orders by barista id.
 // @access  Private
 router.get('/barista/:id', Utils.authenticateToken, async (req, res) => {
