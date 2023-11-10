@@ -16,6 +16,7 @@ mongoose.connect(process.env.MONGO_URI)
         console.log("db connection failed!", err)
     })
 
+
 // Express app setup -----------------------------------------------------------
 const app = express()
 app.use(express.static("public"))
