@@ -380,6 +380,30 @@ router.put('/remove/cart', Utils.authenticateToken, async (req, res) => {
         })
 })
 
+// PUT -------------------------------------------------------------------------
+// @route   /user/removeAll/cart
+// @desc    Remove all drinks from the cart array.
+// @access  Private
+router.put('/removeAll/cart', Utils.authenticateToken, async (req, res) => {
+
+    // Remove drink ids from cart array using array pull.
+    await User.updateOne({_id: req.user.user._id}, {
+        $set: {cart: []},
+    }).exec()
+        .then(async () => {
+            await res.json({
+                message: "drinks removed from cart!"
+            })
+        })
+        .catch(async err => {
+            await res.status(500).json({
+                message: "error removing drinks from cart!",
+                error: err
+            })
+            console.log(err)
+        })
+})
+
 // DELETE ----------------------------------------------------------------------
 // @route   /user/:id
 // @desc    Delete a user by id.
