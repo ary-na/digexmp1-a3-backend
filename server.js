@@ -28,6 +28,11 @@ app.use(fileUpload({
 
 // Setup routes ----------------------------------------------------------------
 
+// - Homepage route
+app.get('/', (req, res) => {
+    res.send("Homepage");
+});
+
 // - Auth route
 const authRouter = require("./routes/auth")
 app.use('/auth', authRouter)
