@@ -21,6 +21,7 @@ router.post('/login', async (req, res) => {
         })
     }
 
+
     // Find user in the database using the email filter.
     await User.findOne({email: req.body.email})
         .then(async user => {
