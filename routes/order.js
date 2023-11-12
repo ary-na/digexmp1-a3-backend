@@ -47,6 +47,43 @@ router.get('/last/:id', Utils.authenticateToken, async (req, res) => {
 })
 
 // GET -------------------------------------------------------------------------
+// @route   /order/myLast/:id
+// @desc    Get last order by barista id.
+// @access  Private
+router.get('/myLast/:id', Utils.authenticateToken, async (req, res) => {
+    // Check if header is missing.
+    if (!req.params.id) {
+        return res.status(401).json({
+            message: "id is missing!"
+        })
+    }
+
+    // Get last order form the Order model by user id.
+    Order.findOne(
+        {barista: {_id: req.params.id}
+        }).sort({date: 'desc'})
+        .populate('user', '_id firstName lastName')
+        .populate('barista', '_id firstName lastName')
+        .populate('drinks._id')
+        .then(async order => {
+            // Check if order exist in the db.
+            if (!order) {
+                return res.status(201).json({
+                    message: "my order not found!"
+                })
+            }
+            await res.json(order)
+        })
+        .catch(async err => {
+            await res.status(500).json({
+                message: "error getting my order!",
+                error: err
+            })
+            await console.log("error getting my order!", err)
+        })
+})
+
+// GET -------------------------------------------------------------------------
 // @route   /order/customer/:id
 // @desc    Get orders by customer id.
 // @access  Private
@@ -118,6 +155,25 @@ router.get('/barista/:id', Utils.authenticateToken, async (req, res) => {
         })
 })
 
+// GET -------------------------------------------------------------------------
+// @route   /order/count/:userId
+// @desc    Get order count by user id.
+// @access  Private
+router.get('/count/:userId', Utils.authenticateToken, async (req, res) => {
+    // Get order count from the Order model by user id.
+    Order.countDocuments({barista: req.params.userId})
+        .then(async count => {
+            await res.json(count)
+        })
+        .catch(async err => {
+            await res.status(500).json({
+                message: "error counting orders!",
+                error: err
+            })
+            await console.log("error counting orders!", err)
+        })
+})
+
 // POST ------------------------------------------------------------------------
 // @route   /order
 // @desc    Create a new order.
@@ -131,9 +187,12 @@ router.post('/', Utils.authenticateToken, async (req, res) => {
     // Create a new order document using the Order model.
     const newOrder = await new Order(req.body)
 
-    // Push order items to the drinks array.
-    for (let i = 0; i < req.body.items.length; i++)
-        newOrder.drinks.push({quantity: req.body.quantities[i], _id: req.body.items[i]})
+    if(req.body.items.constructor === Array)
+        // Push order items to the drinks array.
+        for (let i = 0; i < req.body.items.length; i++)
+            newOrder.drinks.push({quantity: req.body.quantities[i], _id: req.body.items[i]})
+    else
+        newOrder.drinks.push({quantity: req.body.quantities, _id: req.body.items})
 
     // Save the new user document.
     await newOrder.save()

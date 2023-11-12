@@ -5,8 +5,8 @@ const express = require('express')
 const router = express.Router()
 const Utils = require('../Utils')
 const Drink = require('../models/Drink')
+const Order = require('../models/Order')
 const path = require("path")
-const User = require("../models/User");
 
 // GET -------------------------------------------------------------------------
 // @route   /drink
@@ -30,6 +30,25 @@ router.get('/', Utils.authenticateToken, async (req, res) => {
                 error: err
             })
             await console.log("error getting drinks!", err)
+        })
+})
+
+// GET -------------------------------------------------------------------------
+// @route   /drink/count/:userId
+// @desc    Get drink count by user id.
+// @access  Private
+router.get('/count/:userId', Utils.authenticateToken, async (req, res) => {
+    // Get drink count from the Drink model by user id.
+    Drink.countDocuments({user: req.params.userId})
+        .then(async count => {
+            await res.json(count)
+        })
+        .catch(async err => {
+            await res.status(500).json({
+                message: "error counting drinks!",
+                error: err
+            })
+            await console.log("error counting drinks!", err)
         })
 })
 
@@ -84,7 +103,7 @@ router.get('/:drinkId', Utils.authenticateToken, async (req, res) => {
 })
 
 // GET -------------------------------------------------------------------------
-// @route   /drink/by/:id
+// @route   /drink/by/:userId
 // @desc    Get drinks by user id.
 // @access  Private
 router.get('/by/:userId', Utils.authenticateToken, async (req, res) => {
@@ -130,7 +149,7 @@ router.post('/', Utils.authenticateToken, async (req, res) => {
             price: req.body.price,
             user: req.body.user,
             image: uniqueFilename,
-            drinkType: req.body.drinkType,
+            type: req.body.type,
             brewMethod: req.body.brewMethod,
             decaf: req.body.decaf,
             special: true
