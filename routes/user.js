@@ -102,7 +102,7 @@ router.get('/access/:accessLevel', Utils.authenticateToken, async (req, res) => 
 
 // POST ------------------------------------------------------------------------
 // @route   /user
-// @desc    Create a new user.
+// @desc    Create a new user account.
 // @access  Public
 router.post('/', async (req, res) => {
     // Check if body is missing.
@@ -151,7 +151,7 @@ router.post('/', async (req, res) => {
 
 // PUT -------------------------------------------------------------------------
 // @route   /user/:id
-// @desc    Update a user by id.
+// @desc    Update a user account by id.
 // @access  Private
 router.put('/:id', Utils.authenticateToken, async (req, res) => {
     // Check if body is missing.
@@ -206,7 +206,7 @@ router.put('/:id', Utils.authenticateToken, async (req, res) => {
 
 // PUT -------------------------------------------------------------------------
 // @route   /user/add/favouriteBarista
-// @desc    Add a user to favourite barista array.
+// @desc    Add a user to favourite baristas array.
 // @access  Private
 router.put('/add/favouriteBarista', Utils.authenticateToken, async (req, res) => {
     // Check if barista id is missing.
@@ -236,7 +236,7 @@ router.put('/add/favouriteBarista', Utils.authenticateToken, async (req, res) =>
 
 // PUT -------------------------------------------------------------------------
 // @route   /user/remove/favouriteBarista
-// @desc    Remove a user from favourite barista array.
+// @desc    Remove a user from favourite baristas array.
 // @access  Private
 router.put('/remove/favouriteBarista', Utils.authenticateToken, async (req, res) => {
     // Check if barista id is missing.
@@ -326,7 +326,7 @@ router.put('/remove/favouriteDrink', Utils.authenticateToken, async (req, res) =
 
 // PUT -------------------------------------------------------------------------
 // @route   /user/add/cart
-// @desc    Add a drink to the cart array.
+// @desc    Add a drink to cart array.
 // @access  Private
 router.put('/add/cart', Utils.authenticateToken, async (req, res) => {
     // Check if drink id is missing.
@@ -356,7 +356,7 @@ router.put('/add/cart', Utils.authenticateToken, async (req, res) => {
 
 // PUT -------------------------------------------------------------------------
 // @route   /user/remove/cart
-// @desc    Remove a drink from the cart array.
+// @desc    Remove a drink from cart array.
 // @access  Private
 router.put('/remove/cart', Utils.authenticateToken, async (req, res) => {
     // Check if drink id is missing.
@@ -386,7 +386,7 @@ router.put('/remove/cart', Utils.authenticateToken, async (req, res) => {
 
 // PUT -------------------------------------------------------------------------
 // @route   /user/removeAll/cart
-// @desc    Remove all drinks from the cart array.
+// @desc    Remove all drinks from cart array.
 // @access  Private
 router.put('/removeAll/cart', Utils.authenticateToken, async (req, res) => {
 

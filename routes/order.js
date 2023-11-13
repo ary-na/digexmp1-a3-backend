@@ -210,7 +210,7 @@ router.post('/', Utils.authenticateToken, async (req, res) => {
 
 // PUT -------------------------------------------------------------------------
 // @route   /order/status
-// @desc    Change ready status by order id.
+// @desc    Update ready status by order id.
 // @access  Private
 router.put('/status', Utils.authenticateToken, async (req, res) => {
     // Check if body is missing.
