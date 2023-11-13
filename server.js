@@ -29,9 +29,8 @@ app.use(fileUpload({
 // Setup routes ----------------------------------------------------------------
 
 // - Homepage route
-app.get('/', (req, res) => {
-    res.send("coffee on backend api homepage");
-});
+const homeRouter = require("./routes/home")
+app.use('/', homeRouter)
 
 // - Auth route
 const authRouter = require("./routes/auth")

@@ -120,6 +120,10 @@ router.post('/', async (req, res) => {
             })
         }
 
+        // Check if user is a barista, add the default avatar to the body.
+        if(req.body.accessLevel === "2")
+            req.body.avatar = "default-image.jpg"
+
         // Create a new user document using the User model.
         const newUser = await new User(req.body)
 

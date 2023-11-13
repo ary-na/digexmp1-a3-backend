@@ -137,38 +137,54 @@ router.post('/', Utils.authenticateToken, async (req, res) => {
         return res.status(400).send({message: "drink details missing!"})
 
     // Check if image file exists.
-    if (!req.files || !req.files.image)
-        return res.status(400).send({message: "image file missing!"})
+    if (!req.files || !req.files.image) {
+        req.body.image = "default-image.jpg"
 
-    // Upload file and create drink object using Drink model.
-    let uploadPath = path.join(__dirname, '..', 'public', 'images')
-    await Utils.uploadFile(req.files.image, uploadPath, async (uniqueFilename) => {
-        let drink = new Drink({
-            name: req.body.name,
-            description: req.body.description,
-            price: req.body.price,
-            user: req.body.user,
-            image: uniqueFilename,
-            type: req.body.type,
-            brewMethod: req.body.brewMethod,
-            decaf: req.body.decaf,
-            special: true
-        })
+        // Create a new user document using the User model.
+        const newDrink = await new Drink(req.body)
 
-        await drink.save()
-            .then(async drink => {
-                return res.status(201).json(drink)
+        // Save the new user document.
+        await newDrink.save()
+            .then(user => {
+                res.status(201).json(user)
             })
-            .catch(async err => {
+            .catch(err => {
                 res.status(500).json({
                     message: "error saving drink!",
                     error: err
                 })
                 console.log("error saving drink!", err)
             })
-    })
-})
+    } else {
+        // Upload file and create drink object using Drink model.
+        let uploadPath = path.join(__dirname, '..', 'public', 'images')
+        await Utils.uploadFile(req.files.image, uploadPath, async (uniqueFilename) => {
+            let drink = new Drink({
+                name: req.body.name,
+                description: req.body.description,
+                price: req.body.price,
+                user: req.body.user,
+                image: uniqueFilename,
+                type: req.body.type,
+                brewMethod: req.body.brewMethod,
+                decaf: req.body.decaf,
+                special: true
+            })
 
+            await drink.save()
+                .then(async drink => {
+                    return res.status(201).json(drink)
+                })
+                .catch(async err => {
+                    res.status(500).json({
+                        message: "error saving drink!",
+                        error: err
+                    })
+                    console.log("error saving drink!", err)
+                })
+        })
+    }
+})
 
 // PUT -------------------------------------------------------------------------
 // @route   /drink/:id
@@ -195,12 +211,12 @@ router.put('/:id', Utils.authenticateToken, async (req, res) => {
                 image: imageFilename,
                 drinkType: req.body.drinkType,
                 brewMethod: req.body.brewMethod,
-                decaf: !req.body.decaf ? false: req.body.decaf
+                decaf: !req.body.decaf ? false : req.body.decaf
             })
         })
     } else {
         // Update drink if image file does not exist.
-        if(!req.body.decaf)
+        if (!req.body.decaf)
             req.body.decaf = false
         await updateDrink(req.body)
     }
