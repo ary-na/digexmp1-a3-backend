@@ -139,6 +139,7 @@ router.post('/', Utils.authenticateToken, async (req, res) => {
     // Check if image file exists.
     if (!req.files || !req.files.image) {
         req.body.image = "default-image.jpg"
+        req.body.special = true
 
         // Create a new user document using the User model.
         const newDrink = await new Drink(req.body)
