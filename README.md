@@ -5,12 +5,304 @@
 > "Curtin recognises that students who are unfamiliar with the conventions of academic writing can sometimes unintentionally plagiarise or collude on assessments. This may happen if you inadequately acknowledge resources or collaborate with other students when an assessment should be done individually. An academic integrity warning is used to assign you an educative action in these situations so you can learn from your mistakes. More serious academic breaches such as cheating are managed as misconduct."
 For more information, visit [Academic Integrity at Curtin](https://www.curtin.edu.au/students/essentials/rights/academic-integrity/)
 
-## Links
+## 1. Links
 
 - [Live website](https://endearing-manatee-fc92e7.netlify.app)
 - [Backend API](https://anyamchelo-coffeeon-backend-b2n2v.ondigitalocean.app)
 
-## References 
+## 2. API documentation
+
+### 2.1. Auth routes
+
+#### 2.1.1. POST
+
+```http request
+/auth/login
+```
+
+- **Description:** Login request.
+- **Access:** Public.
+---
+
+#### 2.1.2. GET
+
+```http request
+/auth/validate
+```
+- **Description:** Validate login.
+- **Access:** Public.
+---
+
+### 2.2. Home routes
+
+#### 2.2.1. GET
+
+```http request
+/
+```
+- **Description:** Populate database with pre-seeded data if empty.
+- **Access:** Public.
+---
+
+### 2.3. User routes
+
+#### 2.3.1. GET
+
+```http request
+/user
+```
+- **Description:** Get all users.
+- **Access:** Private.
+---
+
+#### 2.3.2. GET
+
+```http request
+/user/:id
+```
+- **Description:** Get a user by id.
+- **Access:** Private.
+---
+
+#### 2.3.3. GET
+
+```http request
+/user/access/:accessLevel
+```
+- **Description:** Get a user by access level.
+- **Access:** Private.
+---
+
+#### 2.3.4. POST
+
+```http request
+/user
+```
+- **Description:** Create a new user account.
+- **Access:** Public.
+---
+
+#### 2.3.5. PUT
+
+```http request
+/user/:id
+```
+- **Description:** Update a user account by id.
+- **Access:** Private.
+---
+
+#### 2.3.6. PUT
+
+```http request
+/user/add/favouriteBarista
+```
+- **Description:** Add a user to favourite baristas array.
+- **Access:** Private.
+---
+
+#### 2.3.7. PUT
+
+```http request
+/user/remove/favouriteBarista
+```
+- **Description:** Remove a user from favourite baristas array.
+- **Access:** Private.
+---
+
+#### 2.3.8. PUT
+
+```http request
+/user/add/favouriteDrink
+```
+- **Description:** Add a drink to favourite drinks array.
+- **Access:** Private.
+---
+
+#### 2.3.9. PUT
+
+```http request
+/user/remove/favouriteDrink
+```
+- **Description:** Remove a drink from favourite drinks array.
+- **Access:** Private.
+---
+
+#### 2.3.10. PUT
+
+```http request
+/user/add/cart
+```
+- **Description:** Add a drink to cart array.
+- **Access:** Private.
+---
+
+#### 2.3.11. PUT
+
+```http request
+/user/remove/cart
+```
+- **Description:** Remove a drink from cart array.
+- **Access:** Private.
+---
+
+#### 2.3.12. PUT
+
+```http request
+/user/removeAll/cart
+```
+- **Description:** Remove all drinks from cart array.
+- **Access:** Private.
+---
+
+#### 2.3.13. DELETE
+
+```http request
+/user/:id
+```
+- **Description:** Delete a user by id.
+- **Access:** Private.
+---
+
+### 2.4. Drink routes
+
+#### 2.4.1. GET
+
+```http request
+/drink
+```
+- **Description:** Get all drinks.
+- **Access:** Private.
+---
+
+#### 2.4.2. GET
+
+```http request
+/drink/count/:userId
+```
+- **Description:** Get drink count by user id.
+- **Access:** Private.
+---
+
+#### 2.4.3. GET
+
+```http request
+/drink/special
+```
+- **Description:** Get all special drinks.
+- **Access:** Private.
+---
+
+#### 2.4.4. GET
+
+```http request
+/drink/:id
+```
+- **Description:** Get a drink by id.
+- **Access:** Private.
+---
+
+#### 2.4.5. GET
+
+```http request
+/drink/by/:userId
+```
+- **Description:** Get drinks by user id.
+- **Access:** Private.
+---
+
+#### 2.4.6. POST
+
+```http request
+/drink
+```
+- **Description:** Create a new drink.
+- **Access:** Private.
+---
+
+#### 2.4.7. PUT
+
+```http request
+/drink/:id
+```
+- **Description:** Update a drink by id.
+- **Access:** Private.
+---
+
+#### 2.4.8. DELETE
+
+```http request
+/drink/:id
+```
+- **Description:** Delete a drink by id.
+- **Access:** Private.
+---
+
+### 2.5. Order routes
+
+#### 2.5.1. GET
+
+```http request
+/order/last/:id
+```
+- **Description:** Get last order by customer id.
+- **Access:** Private.
+---
+
+#### 2.5.2. GET
+
+```http request
+/order/myLast/:id
+```
+- **Description:** Get last order by barista id.
+- **Access:** Private.
+---
+
+#### 2.5.3. GET
+
+```http request
+/order/customer/:id
+```
+- **Description:** Get orders by customer id.
+- **Access:** Private.
+---
+
+#### 2.5.4. GET
+
+```http request
+/order/barista/:id
+```
+- **Description:** Get orders by barista id.
+- **Access:** Private.
+---
+
+#### 2.5.5. GET
+
+```http request
+/order/count/:userId
+```
+- **Description:** Get order count by user id.
+- **Access:** Private.
+---
+
+#### 2.5.6. POST
+
+```http request
+/order
+```
+- **Description:** Create a new order.
+- **Access:** Private.
+---
+
+#### 2.5.7. PUT
+
+```http request
+/order/status
+```
+- **Description:** Update ready status by order id.
+- **Access:** Private.
+---
+
+## 3. References 
 
 “Array.prototype.filter().” 2019. MDN Web Docs. November 6, 2019. https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter.
 
@@ -20,7 +312,7 @@ For more information, visit [Academic Integrity at Curtin](https://www.curtin.ed
 
 “30 Different Types of Coffee Drinks Explained.” n.d. Www.gridlockcoffee.com.au. https://www.gridlockcoffee.com.au/blog/30-different-types-of-coffee-drinks-explained/.
 
-## Images
+## 4. Images
 
 “Affogato Isolated Transparent Background. Generative AI Stock Photo.” n.d. Adobe Stock. Accessed November 13, 2023. https://stock.adobe.com/au/images/affogato-isolated-transparent-background-generative-ai/630476373?prev_url=detail&asset_id=630476373.
 
