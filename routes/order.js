@@ -24,7 +24,7 @@ router.get('/last/:id', Utils.authenticateToken, async (req, res) => {
     // Get last order form the Order model by user id.
     Order.findOne(
         {user: {_id: req.params.id}
-    }).sort({date: 'desc'})
+    }).sort({createdAt: 'desc'})
         .populate('user', '_id firstName lastName')
         .populate('barista', '_id firstName lastName')
         .populate('drinks._id')
@@ -61,7 +61,7 @@ router.get('/myLast/:id', Utils.authenticateToken, async (req, res) => {
     // Get last order form the Order model by user id.
     Order.findOne(
         {barista: {_id: req.params.id}
-        }).sort({date: 'desc'})
+        }).sort({createdAt: 'desc'})
         .populate('user', '_id firstName lastName')
         .populate('barista', '_id firstName lastName')
         .populate('drinks._id')
