@@ -8,7 +8,7 @@ For more information, visit [Academic Integrity at Curtin](https://www.curtin.ed
 ## 1. Links
 
 - [Live website](https://endearing-manatee-fc92e7.netlify.app)
-- [Backend API](https://anyamchelo-coffeeon-backend-b2n2v.ondigitalocean.app)
+- ~~[Backend API](https://anyamchelo-coffeeon-backend-b2n2v.ondigitalocean.app)~~
 
 ## 2. API documentation
 
